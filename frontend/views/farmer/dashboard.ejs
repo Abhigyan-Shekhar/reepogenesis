@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - JeevBandhu</title>
+    <link rel="stylesheet" href="/css/output.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/dashboard" class="text-2xl font-bold text-emerald-600">🐄 JeevBandhu</a>
+                <div class="flex items-center space-x-6">
+                    <a href="/dashboard" class="text-gray-700 hover:text-emerald-600 transition">Dashboard</a>
+                    <a href="/animals/add" class="text-gray-700 hover:text-emerald-600 transition">Add Animal</a>
+                    <a href="/guide/medicine-guide" class="text-gray-700 hover:text-emerald-600 transition">Medicine
+                        Guide</a>
+                    <a href="/list-product" class="text-gray-700 hover:text-emerald-600 transition">List Product</a>
+                    <a href="/my-products" class="text-gray-700 hover:text-emerald-600 transition">My Products</a>
+                    <a href="/orders/sales" class="text-gray-700 hover:text-emerald-600 transition">Sales</a>
+                    <a href="/marketplace" class="text-gray-700 hover:text-emerald-600 transition">Marketplace</a>
+                    <span class="text-gray-600">Hi, <%= user.name %></span>
+                    <form action="/logout" method="POST" class="inline">
+                        <button type="submit" class="text-red-600 hover:text-red-700 transition">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Herd Dashboard</h1>
+            <p class="text-gray-600 mt-2">Manage your livestock and monitor health status</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card bg-gradient-to-br from-green-50 to-emerald-100">
+                <h3 class="text-sm font-medium text-gray-600">Total Animals</h3>
+                <p class="text-3xl font-bold text-gray-900 mt-2">
+                    <%= stats.total %>
+                </p>
+            </div>
+
+            <div class="card bg-gradient-to-br from-emerald-50 to-green-100">
+                <h3 class="text-sm font-medium text-gray-600">Healthy</h3>
+                <p class="text-3xl font-bold text-health-good mt-2">
+                    <%= stats.healthy %>
+                </p>
+            </div>
+
+            <div class="card bg-gradient-to-br from-red-50 to-pink-100">
+                <h3 class="text-sm font-medium text-gray-600">Withdrawal Lock</h3>
+                <p class="text-3xl font-bold text-health-danger mt-2">
+                    <%= stats.locked %>
+                </p>
+            </div>
+
+            <div class="card bg-gradient-to-br from-blue-50 to-indigo-100">
+                <h3 class="text-sm font-medium text-gray-600">Avg Health Score</h3>
+                <p class="text-3xl font-bold text-gray-900 mt-2">
+                    <%= stats.avgHealthScore %>
+                </p>
+            </div>
+        </div>
+
+        <% if (animals.length===0) { %>
+            <div class="text-center py-16">
+                <div class="text-6xl mb-4">🐄</div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">No animals yet</h2>
+                <p class="text-gray-600 mb-6">Start by adding your first animal to the system</p>
+                <a href="/animals/add" class="btn-primary">Add First Animal</a>
+            </div>
+            <% } else { %>
+                <!-- Herd Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <% animals.forEach(animal=> { %>
+                        <div class="card border-4 
+            <%= animal.status === 'HEALTHY' ? 'status-healthy' : '' %>
+            <%= animal.status === 'WITHDRAWAL_LOCK' ? 'status-locked' : '' %>
+            <%= animal.status === 'QUARANTINE' ? 'status-quarantine' : '' %>">
+
+                            <!-- Animal Header -->
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">
+                                        <%= animal.tagId %>
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        <%= animal.species %>
+                                            <% if (animal.breed) { %> - <%= animal.breed %>
+                                                    <% } %>
+                                    </p>
+                                </div>
+
+                                <!-- Status Badge -->
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                <%= animal.status === 'HEALTHY' ? 'bg-green-200 text-green-800' : '' %>
+                <%= animal.status === 'WITHDRAWAL_LOCK' ? 'bg-red-200 text-red-800' : '' %>
+                <%= animal.status === 'QUARANTINE' ? 'bg-yellow-200 text-yellow-800' : '' %>">
+                                    <%= animal.status %>
+                                </span>
+                            </div>
+
+                            <!-- Health Score -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Health Score</span>
+                                    <span class="font-semibold">
+                                        <%= animal.healthScore %>/100
+                                    </span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="h-2 rounded-full
+                  <%= animal.healthScore >= 70 ? 'bg-health-good' : '' %>
+                  <%= animal.healthScore >= 40 && animal.healthScore < 70 ? 'bg-health-warning' : '' %>
+                  <%= animal.healthScore < 40 ? 'bg-health-danger' : '' %>" style="width: <%= animal.healthScore %>%">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Withdrawal Warning -->
+                            <% if (animal.status==='WITHDRAWAL_LOCK' && animal.withdrawalEndsAt) { %>
+                                <% const now=new Date(); const diff=new Date(animal.withdrawalEndsAt) - now; const
+                                    daysRemaining=Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24))); %>
+                                    <div
+                                        class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded-lg mb-4 text-sm">
+                                        <strong>🔒 LOCKED:</strong>
+                                        <%= daysRemaining %> day(s) remaining
+                                    </div>
+                                    <% } else if (animal.status==='HEALTHY' ) { %>
+                                        <div
+                                            class="bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded-lg mb-4 text-sm">
+                                            <strong>✅ Ready</strong> for production
+                                        </div>
+                                        <% } %>
+
+                                            <!-- Actions -->
+                                            <div class="flex space-x-2">
+                                                <a href="/animals/<%= animal._id %>"
+                                                    class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                                                    View Details
+                                                </a>
+                                                <a href="/animals/<%= animal._id %>/add-medicine"
+                                                    class="flex-1 text-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm">
+                                                    Add Medicine
+                                                </a>
+                                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+                <% } %>
+    </main>
+</body>
+
+</html>

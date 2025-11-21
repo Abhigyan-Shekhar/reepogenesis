@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JeevBandhu - Livestock Health Management</title>
+  <link rel="stylesheet" href="/css/output.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="/" class="text-2xl font-bold text-emerald-600">🐄 JeevBandhu</a>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <% if (user) { %>
+            <% if (user.role === 'farmer') { %>
+              <a href="/dashboard" class="text-gray-700 hover:text-emerald-600 transition">Dashboard</a>
+              <a href="/animals/add" class="text-gray-700 hover:text-emerald-600 transition">Add Animal</a>
+              <a href="/list-product" class="text-gray-700 hover:text-emerald-600 transition">List Product</a>
+              <a href="/my-products" class="text-gray-700 hover:text-emerald-600 transition">My Products</a>
+            <% } %>
+            <a href="/marketplace" class="text-gray-700 hover:text-emerald-600 transition">Marketplace</a>
+            <span class="text-gray-600">Hi, <%= user.name || 'User' %></span>
+            <form action="/logout" method="POST" class="inline">
+              <button type="submit" class="text-red-600 hover:text-red-700 transition">Logout</button>
+            </form>
+          <% } else { %>
+            <a href="/login" class="text-gray-700 hover:text-emerald-600 transition">Login</a>
+            <a href="/register" class="btn-primary">Get Started</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <%- body %>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white mt-12 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <p class="text-center text-gray-500 text-sm">
+        © 2024 JeevBandhu - Ensuring Bio-Safe Livestock Products
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
