@@ -132,6 +132,20 @@ router.post('/create', requireAuth, requireRole('buyer'), async (req, res) => {
         // Calculate total price
         const totalPrice = quantityNum * product.pricePerUnit;
 
+        // Get payment and delivery information from request
+        const { paymentMethod, deliveryAddress } = req.body;
+
+        // Validate delivery address
+        if (!deliveryAddress || deliveryAddress.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Delivery address is required'
+            });
+        }
+
+        // Calculate estimated delivery days (simple logic - can be enhanced later)
+        const estimatedDeliveryDays = 5; // Default 5 days
+
         // Create order
         const orderData = {
             productId: product._id,
@@ -143,7 +157,10 @@ router.post('/create', requireAuth, requireRole('buyer'), async (req, res) => {
             pricePerUnit: product.pricePerUnit,
             totalPrice,
             animalId: animal._id,
-            animalTagId: animal.tagId
+            animalTagId: animal.tagId,
+            paymentMethod: paymentMethod || 'Cash on Delivery',
+            deliveryAddress: deliveryAddress.trim(),
+            estimatedDeliveryDays
         };
 
         const order = await Order.create(orderData);

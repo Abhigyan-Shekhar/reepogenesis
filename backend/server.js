@@ -50,6 +50,7 @@ const authRoutes = require('./routes/auth');
 const animalRoutes = require('./routes/animals');
 const medicalRoutes = require('./routes/medical');
 const marketplaceRoutes = require('./routes/marketplace');
+const aiRoutes = require('./routes/ai');
 
 app.use('/', authRoutes);
 app.use('/', animalRoutes);
@@ -57,6 +58,10 @@ app.use('/', medicalRoutes);
 app.use('/', marketplaceRoutes);
 app.use('/orders', require('./routes/orders'));
 app.use('/guide', require('./routes/guide'));
+app.use('/', aiRoutes);
+app.use('/', require('./routes/community'));
+app.use('/', require('./routes/compliance'));
+app.use('/', require('./routes/analytics'));
 
 // Home route
 app.get('/', (req, res) => {

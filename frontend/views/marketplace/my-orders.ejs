@@ -90,24 +90,65 @@
                                 </div>
                             </div>
 
-                            <!-- Animal Traceability -->
-                            <div class="border-t pt-4">
-                                <h4 class="font-semibold text-gray-900 mb-2">🐮 Source Animal Traceability</h4>
-                                <div class="flex items-center justify-between bg-emerald-50 p-3 rounded-lg">
-                                    <div>
-                                        <p class="text-sm text-gray-600">Tag ID: <span
-                                                class="font-semibold text-gray-900">
-                                                <%= order.animalTagId %>
-                                            </span></p>
-                                        <% if (order.animal) { %>
-                                            <p class="text-sm text-gray-600">Species: <%= order.animal.species %> |
-                                                    Health Score: <span class="font-semibold text-emerald-600">
-                                                        <%= order.animal.healthScore %>
-                                                    </span></p>
-                                            <% } %>
+                            <!-- Delivery Information -->
+                            <% if (order.deliveryAddress) { %>
+                                <div class="border-t pt-4 mb-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">📍 Delivery Information</h4>
+                                    <div class="bg-amber-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-700">
+                                            <%= order.deliveryAddress %>
+                                        </p>
+                                        <% const estimatedDate=new Date(order.createdAt);
+                                            estimatedDate.setDate(estimatedDate.getDate() + (order.estimatedDeliveryDays
+                                            || 5)); %>
+                                            <p class="text-xs text-gray-600 mt-2">
+                                                Estimated Delivery: <%= estimatedDate.toLocaleDateString('en-IN', {
+                                                    year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                                            </p>
                                     </div>
                                 </div>
-                            </div>
+                                <% } %>
+
+                                    <!-- Payment Information -->
+                                    <div class="border-t pt-4 mb-4">
+                                        <h4 class="font-semibold text-gray-900 mb-2">💳 Payment Information</h4>
+                                        <div class="bg-green-50 p-3 rounded-lg">
+                                            <p class="text-sm text-gray-700">
+                                                <span class="font-medium">Method:</span>
+                                                <%= order.paymentMethod || 'Cash on Delivery' %>
+                                            </p>
+                                            <p class="text-sm text-gray-700 mt-1">
+                                                <span class="font-medium">Status:</span>
+                                                <% if (order.paymentStatus==='completed' ) { %>
+                                                    <span class="text-green-600 font-semibold">✅ Completed</span>
+                                                    <% } else if (order.paymentStatus==='failed' ) { %>
+                                                        <span class="text-red-600 font-semibold">❌ Failed</span>
+                                                        <% } else { %>
+                                                            <span class="text-yellow-600 font-semibold">⏳ Pending</span>
+                                                            <% } %>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Animal Traceability -->
+                                    <div class="border-t pt-4">
+                                        <h4 class="font-semibold text-gray-900 mb-2">🐮 Source Animal Traceability</h4>
+                                        <div class="flex items-center justify-between bg-emerald-50 p-3 rounded-lg">
+                                            <div>
+                                                <p class="text-sm text-gray-600">Tag ID: <span
+                                                        class="font-semibold text-gray-900">
+                                                        <%= order.animalTagId %>
+                                                    </span></p>
+                                                <% if (order.animal) { %>
+                                                    <p class="text-sm text-gray-600">Species: <%= order.animal.species
+                                                            %> |
+                                                            Health Score: <span class="font-semibold text-emerald-600">
+                                                                <%= order.animal.healthScore %>
+                                                            </span></p>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
                         </div>
                         <% }) %>
                 </div>

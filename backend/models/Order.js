@@ -24,6 +24,15 @@ class Order {
             // Order status
             status: 'pending', // pending, confirmed, delivered, cancelled
 
+            // Payment information
+            paymentMethod: orderData.paymentMethod || 'Cash on Delivery',
+            transactionId: orderData.transactionId || null,
+            paymentStatus: orderData.paymentStatus || 'pending', // pending, completed, failed
+
+            // Delivery information
+            deliveryAddress: orderData.deliveryAddress || '',
+            estimatedDeliveryDays: orderData.estimatedDeliveryDays || 5,
+
             // Timestamps
             createdAt: new Date(),
             updatedAt: new Date()

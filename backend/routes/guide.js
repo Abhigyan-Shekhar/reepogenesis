@@ -13,12 +13,18 @@ const {
 router.get('/medicine-guide', requireAuth, requireRole('farmer'), (req, res) => {
     const species = req.query.species || 'cattle';
     const searchQuery = req.query.search || '';
+    const disease = req.query.disease || '';
 
     let medicines = getMedicinesBySpecies(species);
 
     // Filter by search query if provided
     if (searchQuery) {
         medicines = searchByTreatment(species, searchQuery);
+    }
+
+    // Filter by disease if coming from diagnosis
+    if (disease) {
+        medicines = searchByTreatment(species, disease);
     }
 
     const categories = getMedicineCategories(species);
@@ -31,7 +37,8 @@ router.get('/medicine-guide', requireAuth, requireRole('farmer'), (req, res) => 
         },
         species,
         medicines,
-        searchQuery
+        searchQuery,
+        disease  // Pass disease to template
     });
 });
 

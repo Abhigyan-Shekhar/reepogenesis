@@ -67,15 +67,18 @@
 
         <!-- Search Bar -->
         <div class="card mb-6">
-            <form method="GET" action="/guide/medicine-guide" class="flex gap-4">
-                <input type="hidden" name="species" value="<%= species %>">
-                <input type="text" name="search" value="<%= searchQuery %>"
-                    placeholder="Search by treatment (e.g., mastitis, pneumonia, worms...)"
+            <div class="flex gap-4">
+                <input type="text" id="medicineSearch"
+                    placeholder="🔍 Search by treatment or medicine name (e.g., mastitis, pneumonia, worms...)"
                     class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
-                <button type="submit" class="btn-primary px-8">
-                    🔍 Search
-                </button>
-            </form>
+                <div class="flex items-center px-4 py-3 bg-emerald-50 rounded-lg">
+                    <span class="text-sm text-emerald-700 font-semibold">
+                        <span id="visibleMedicines">
+                            <%= medicines.length %>
+                        </span> of <%= medicines.length %> shown
+                    </span>
+                </div>
+            </div>
         </div>
 
         <!-- Medicine Cards -->
@@ -86,9 +89,12 @@
                 <p class="text-gray-600">Try a different search term</p>
             </div>
             <% } else { %>
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-2 gap-6" id="medicineGrid">
                     <% medicines.forEach(medicine=> { %>
-                        <div class="card hover:shadow-xl transition-shadow">
+                        <div class="card hover:shadow-xl transition-shadow medicine-card"
+                            data-name="<%= medicine.name.toLowerCase() %>"
+                            data-treatments="<%= medicine.treatments.map(t => t.toLowerCase()).join(',') %>"
+                            data-category="<%= medicine.category.toLowerCase() %>">
                             <!-- Header -->
                             <div class="flex justify-between items-start mb-4">
                                 <div>
@@ -263,6 +269,41 @@
             } catch (error) {
                 alert('❌ Failed to calculate dosage. Please try again.');
             }
+        }
+
+        // Real-time search functionality
+        const searchInput = document.getElementById('medicineSearch');
+        const medicineCards = document.querySelectorAll('.medicine-card');
+        const visibleCount = document.getElementById('visibleMedicines');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase().trim();
+                let visible = 0;
+
+                medicineCards.forEach(card => {
+                    const name = card.dataset.name;
+                    const treatments = card.dataset.treatments;
+                    const category = card.dataset.category;
+
+                    // Check if search term matches name, treatments, or category
+                    const matches = name.includes(searchTerm) ||
+                        treatments.includes(searchTerm) ||
+                        category.includes(searchTerm);
+
+                    if (matches || searchTerm === '') {
+                        card.style.display = 'block';
+                        visible++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Update visible count
+                if (visibleCount) {
+                    visibleCount.textContent = visible;
+                }
+            });
         }
     </script>
 </body>
